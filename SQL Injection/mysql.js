@@ -14,11 +14,15 @@ const connection = mysql.createConnection({
 connection.connect();
 
 router.get('/example1/user/:id', (req,res) => {
-    let userId = req.params.id;
-    let query = {
-        sql : "SELECT * FROM users WHERE id=" + userId
+    let userId = parseInt(req.params.id);
+    if (isNaN(userId)) {
+        return res.status(400).json({ error: "Invalid ID" });
     }
-    connection.query(query,(err, result) => {
+    let query = {
+        sql : "SELECT * FROM users WHERE id= ?",
+        values: [userId]
+    }
+    connection.query(query, (err, result) => {
         res.json(result);
     });
 })
